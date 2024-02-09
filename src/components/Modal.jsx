@@ -1,17 +1,30 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Mensaje from "./Mensaje"
 import CerrarImg from "../img/cerrar.svg"
 
-const Modal = ({setModal, animarModal, setAnimarModal, guardarGasto}) => {
+const Modal = ({setModal, animarModal, setAnimarModal, guardarGasto, gastoEditar, setGasteEditar}) => {
 
     const [mensaje, setMensaje] = useState("")
     const [nombre, setNombre] = useState("")
     const [cantidad, setCantidad] = useState("")
     const [categoría, setCategoría] = useState("")
+    const [fecha, setFecha] = useState("")
+    const [id, setId]= useState("")
 
+    useEffect(()=> {
+        if(Object.keys(gastoEditar).length>0){
+            setNombre(gastoEditar.nombre),
+            setCantidad(gastoEditar.cantidad),
+            setCategoría(gastoEditar.categoría)
+            setId(gastoEditar.id)
+            setFecha(gastoEditar.fecha)
+        }
+    },[])
+    
     const OcultarModal = () =>{
         //setModal(false)
         setAnimarModal(false)
+        setGasteEditar({})
         setTimeout(()=> {
             setModal(false)
         }, 400)      
@@ -28,7 +41,7 @@ const Modal = ({setModal, animarModal, setAnimarModal, guardarGasto}) => {
             }, 3000)
             return
         }
-        guardarGasto({nombre, cantidad,categoría})
+        guardarGasto({nombre, cantidad,categoría, id, fecha})
     }
 
     return (
@@ -44,7 +57,7 @@ const Modal = ({setModal, animarModal, setAnimarModal, guardarGasto}) => {
             <form 
                 onSubmit={handleSubmit}
                 className={`formulario ${animarModal ? "animar" : "cerrar"}`}>
-                <legend>Nuevo Gasto</legend>
+                <legend>{gastoEditar.nombre ? "Editar Gasto" : "Nuevo Gasto"}</legend>
 
                 {mensaje && <Mensaje tipo="error">{mensaje}</Mensaje>}
 
@@ -88,7 +101,7 @@ const Modal = ({setModal, animarModal, setAnimarModal, guardarGasto}) => {
 
                 <input 
                     type="submit" 
-                    value="Añadir Gasto" 
+                    value={gastoEditar.nombre ? "Guardar Cambios" : "Añadir Gasto"} 
                 />
             </form>
         </div>

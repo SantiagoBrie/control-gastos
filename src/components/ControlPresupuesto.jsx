@@ -1,7 +1,19 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { formatearMoneda } from "../helpers"
 
-const ControlPresupuesto = ({presupuesto}) => {
+const ControlPresupuesto = ({presupuesto, gastos}) => {
+
+    const [disponible, setDisponible] = useState(0)
+    const [gastado, setGastado] = useState(0)
+
+    useEffect(()=> {
+        const totalGastado = gastos.reduce((total, gasto) => gasto.cantidad + total, 0)
+        const totalDisponible = presupuesto - totalGastado
+        setGastado(totalGastado)
+        setDisponible(totalDisponible)
+    },[gastos])
+
+    
 
     return (
         <div className="contenedor-presupuesto contenedor sombra dos-columnas">
@@ -15,11 +27,11 @@ const ControlPresupuesto = ({presupuesto}) => {
                 </p>
                 
                 <p>
-                    <span>Disponible: </span> {formatearMoneda(presupuesto)}
+                    <span>Disponible: </span> {formatearMoneda(disponible)}
                 </p>
 
                 <p>
-                    <span>Gastado: </span> {formatearMoneda(presupuesto)}
+                    <span>Gastado: </span> {formatearMoneda(gastado)}
                 </p>
             </div>
         </div>
