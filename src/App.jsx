@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import Header from './components/Header'
+import Filtros from './components/Filtros'
 import ListadoGastos from './components/ListadoGastos'
 import Modal from './components/Modal'
 import { generarId } from './helpers'
@@ -17,6 +18,8 @@ function App() {
   const [gastos, setGastos] = useState(
     localStorage.getItem("gastos") ? JSON.parse(localStorage.getItem("gastos")) : []
   )
+  const [filtro, setFiltro] =useState("")
+  const [gastosFiltrados, setGastosFiltrados] = useState([])
 
   useEffect(()=> {
     if(Object.keys(gastoEditar).length>0){
@@ -42,6 +45,13 @@ function App() {
       setIsValidPresupuesto(true)
     }
   },[])
+
+  useEffect(()=>{
+    if(filtro){
+      const gastosFiltrados = gastos.filter(gasto => gasto.categoría === filtro)
+      setGastosFiltrados(gastosFiltrados)
+    }
+  },[filtro])
 
   const handleNuevoGasto = () => {
     setModal(true)
@@ -84,11 +94,19 @@ function App() {
 
       {isValidPresupuesto && ( // en el Ternario si coloco && me evito tenes que colocar el :
         <>
-          <ListadoGastos
-            gastos={gastos}
-            setGastoEditar={setGastoEditar}
-            eliminarGasto={eliminarGasto}
-          />
+          <main>
+            <Filtros
+              filtro = {filtro}
+              setFiltro={setFiltro}            
+            />
+            <ListadoGastos
+              gastos={gastos}
+              setGastoEditar={setGastoEditar}
+              eliminarGasto={eliminarGasto}
+              gastosFiltrados={gastosFiltrados}
+              filtro={filtro}
+            />
+          </main>
           <div className="nuevo-gasto">
             <img 
               src={IconoNuevoGasto} 
